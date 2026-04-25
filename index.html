@@ -395,6 +395,27 @@
       color: #c9b58c;
     }
 
+    .room-panel-toggle {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 10;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(10, 8, 3, 0.9);
+      color: #f4dfb2;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .room-panel-toggle:hover {
+      background: rgba(212, 165, 74, 0.2);
+    }
+
     #roomPanel {
       position: absolute;
       right: 14px;
@@ -712,6 +733,13 @@
         width: 100%;
         font-size: 0.8rem;
       }
+      .room-panel-toggle {
+        right: 10px;
+        bottom: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
       #roomPanel h3 {
         font-size: 1rem;
       }
@@ -829,6 +857,7 @@
       <span class="room-label" id="roomTitleLabel">SHOWROOM</span>
       <input class="room-search" id="roomSearchInput" type="search" placeholder="Search in showroom...">
     </div>
+    <button id="roomPanelToggle" class="room-panel-toggle" type="button">&#8597;</button>
     <aside id="roomPanel">
       <h3 id="roomName">Product</h3>
       <p class="panel-price" id="roomPrice">Rs 0</p>
@@ -1718,6 +1747,9 @@
       addOrderForCurrentUser(selectedProduct, selectedQty);
       backToLanding();
       orderSingleProduct();
+    });
+    document.getElementById("roomPanelToggle").addEventListener("click", () => {
+      document.getElementById("roomPanel").classList.toggle("open");
     });
     roomSearchInput.addEventListener("input", () => {
       roomSearchQuery = roomSearchInput.value.trim().toLowerCase();
