@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Ethnic Royale</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@400;500;600&display=swap");
+    :root {
+      --gold: #d4a54a;
+      --panel: rgba(12, 9, 4, 0.86);
+      --border: rgba(212, 165, 74, 0.32);
+      --text: #f0e7d0;
+      --muted: #cbbd9c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Montserrat", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(212, 165, 74, 0.1), transparent 40%), #060402;
+      padding: 20px;
+    }
+    .card {
+      width: min(900px, 96vw);
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    h1 { font-family: "Cinzel", serif; color: #f2dfb4; }
+    p { color: var(--muted); line-height: 1.65; }
+    .nav {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      color: #e7dac0;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a.active,
+    .nav a:hover {
+      border-color: var(--border);
+      background: rgba(212, 165, 74, 0.1);
+      color: #f8e6be;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="top">
+      <h1>About Us</h1>
+      <ul class="nav">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="collection.html">COLLECTION</a></li>
+        <li><a href="about.html" class="active">ABOUT US</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+      </ul>
+    </div>
+    <p>Ethnic Royale ek premium fashion experience hai jahan hum traditional elegance ko modern presentation ke saath blend karte hain.</p>
+    <p>Humara focus craftsmanship, fit, aur royal styling par hai, taaki har celebration memorable lage.</p>
+    <p>Virtual showroom approach se customers product ko immersive way me explore kar sakte hain aur direct order place kar sakte hain.</p>
+  </main>
+
+  <script src="auth-utils.js"></script>
+  <script>
+    Auth.requireAuthOrRedirect("login.html");
+  </script>
+</body>
+</html>

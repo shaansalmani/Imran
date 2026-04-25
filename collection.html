@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection - Ethnic Royale</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@400;500;600&display=swap");
+    :root {
+      --gold: #d4a54a;
+      --panel: rgba(12, 9, 4, 0.86);
+      --border: rgba(212, 165, 74, 0.32);
+      --text: #f0e7d0;
+      --muted: #cbbd9c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Montserrat", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(212, 165, 74, 0.1), transparent 40%), #060402;
+      padding: 20px;
+    }
+    .card {
+      width: min(1100px, 96vw);
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    h1 { font-family: "Cinzel", serif; color: #f2dfb4; }
+    .nav {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .nav a {
+      color: #e7dac0;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+    .nav a.active,
+    .nav a:hover {
+      border-color: var(--border);
+      background: rgba(212, 165, 74, 0.1);
+      color: #f8e6be;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+    .item {
+      position: relative;
+      border: 1px solid rgba(212, 165, 74, 0.22);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(10, 8, 3, 0.66);
+    }
+    .item img { width: 100%; height: 190px; object-fit: cover; display: block; }
+    .item p {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      color: #f0dfb4;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="top">
+      <h1>Collection</h1>
+      <ul class="nav">
+        <li><a href="index.html">HOME</a></li>
+        <li><a href="collection.html" class="active">COLLECTION</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+      </ul>
+    </div>
+    <div class="grid">
+      <article class="item"><img src="product1.jpg" alt=""><p>Royal Sherwani Collection</p></article>
+      <article class="item"><img src="product2.jpg" alt=""><p>Wedding Classics</p></article>
+      <article class="item"><img src="product3.jpg" alt=""><p>Premium Festive Wear</p></article>
+      <article class="item"><img src="product1.jpg" alt=""><p>Modern Ethnic Line</p></article>
+      <article class="item"><img src="product2.jpg" alt=""><p>Luxury Groom Sets</p></article>
+      <article class="item"><img src="product3.jpg" alt=""><p>Designer Embroidered Range</p></article>
+    </div>
+  </main>
+
+  <script src="auth-utils.js"></script>
+  <script>
+    Auth.requireAuthOrRedirect("login.html");
+  </script>
+</body>
+</html>
