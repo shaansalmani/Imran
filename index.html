@@ -895,7 +895,7 @@
     let roomSearchQuery = "";
     let bottomListData = [];
     let labels = [];
-    const roomRadius = 6;
+    const roomRadius = 8;
 
     const roomLabelMap = { showroom: "SHOWROOM" };
     const centerPreviewImage = document.getElementById("centerPreviewImage");
@@ -1490,9 +1490,9 @@
         scene.add(mesh);
         products.push(mesh);
 
-        // Label centered on product photo
+        // Label above product (fixed position)
         const label = createTextSprite(product.name);
-        label.position.set(x, 2.4, z + 0.15);
+        label.position.set(x, 4.1, z);
         scene.add(label);
         labels.push(label);
 
@@ -1685,12 +1685,7 @@
 
       const time = performance.now() * 0.001;
 
-      // Gentle bobbing for products
-      products.forEach((mesh, idx) => {
-        if (mesh.userData.originalY !== undefined) {
-          mesh.position.y = mesh.userData.originalY + Math.sin(time * 1.2 + idx * 0.8) * 0.04;
-        }
-      });
+      // Products and labels remain fixed — no bobbing
 
       // Animate particles
       const particleSystem = scene.getObjectByName('particles');
