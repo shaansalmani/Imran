@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Navigation Linking Task
 
 ## Plan
@@ -15,3 +16,10 @@
 - [x] Fix about.html navigation
 - [x] Fix contact.html navigation
 
+=======
+# Task TODO
+
+- [x] Update collection.html — overlay product names on top of images
+- [x] Update ndex.html — move 3D showroom labels above product frames
+
+>>>>>>> a4de35b74dbca9cc4d0f8d2ef3bdda3659a882d9
