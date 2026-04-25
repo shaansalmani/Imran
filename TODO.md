@@ -1,25 +1,16 @@
-<<<<<<< HEAD
-# Navigation Linking Task
+# Ethnic Royale - Fixed Files
 
-## Plan
-1. Fix broken home links in collection.html, about.html, contact.html (`ndex.html` → `index.html`).
-2. Add consistent top navigation bar to collection.html, about.html, and contact.html with links: HOME, COLLECTION, ABOUT US, CONTACT.
-3. Highlight the active page in each file's navigation.
+## Changes
+- Resolved Git merge conflicts in all HTML files
+- Fixed broken `ndex.html` links → `index.html`
+- Restored missing navigation bars and styles
+- Repaired truncated `login.html` (added back catch block and closing tags)
 
-## Files to Edit
+## Files Updated
+- login.html
+- signup.html
 - collection.html
 - about.html
 - contact.html
+- TODO.md
 
-## Progress
-- [x] Fix collection.html navigation
-- [x] Fix about.html navigation
-- [x] Fix contact.html navigation
-
-=======
-# Task TODO
-
-- [x] Update collection.html — overlay product names on top of images
-- [x] Update ndex.html — move 3D showroom labels above product frames
-
->>>>>>> a4de35b74dbca9cc4d0f8d2ef3bdda3659a882d9
