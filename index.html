@@ -1403,17 +1403,24 @@
       const ctx = canvas.getContext("2d");
       canvas.width = 512;
       canvas.height = 128;
-      ctx.fillStyle = "rgba(0,0,0,0)";
+
+      // Semi-transparent dark background for readability on photo
+      ctx.fillStyle = "rgba(10, 8, 3, 0.75)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.font = "bold 40px Montserrat, sans-serif";
+
+      // Text stroke for extra clarity
+      ctx.font = "bold 42px Montserrat, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "rgba(0,0,0,0.8)";
+      ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
       ctx.fillStyle = "#f0dfb4";
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.minFilter = THREE.LinearFilter;
-      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.95 });
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.98 });
       const sprite = new THREE.Sprite(material);
       sprite.scale.set(1.8, 0.45, 1);
       return sprite;
@@ -1483,9 +1490,9 @@
         scene.add(mesh);
         products.push(mesh);
 
-        // Label above product
+        // Label centered on product photo
         const label = createTextSprite(product.name);
-        label.position.set(x, 4.1, z);
+        label.position.set(x, 2.4, z + 0.15);
         scene.add(label);
         labels.push(label);
 
