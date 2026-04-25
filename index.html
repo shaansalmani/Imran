@@ -1212,7 +1212,7 @@
       renderer.toneMapping = THREE.NoToneMapping;
       document.getElementById("showroomCanvas").appendChild(renderer.domElement);
 
-      const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+      const ambient = new THREE.AmbientLight(0xffffff, 0.65);
       scene.add(ambient);
 
       // Neutral chandelier lights
@@ -1223,7 +1223,7 @@
         cl.position.set(Math.cos(angle) * 2.5, 6, Math.sin(angle) * 2.5);
         scene.add(cl);
       }
-      const centerLight = new THREE.PointLight(0xffffff, 0.8, 30);
+      const centerLight = new THREE.PointLight(0xffffff, 1.2, 30);
       centerLight.position.set(0, 5.5, 0);
       scene.add(centerLight);
 
@@ -1509,12 +1509,8 @@
                 mesh.material.map.dispose();
               }
               mesh.material.dispose();
-              mesh.material = new THREE.MeshStandardMaterial({
-                map: texture,
-                roughness: 0.55,
-                metalness: 0.05,
-                emissive: 0x111111,
-                emissiveIntensity: 0.15
+              mesh.material = new THREE.MeshBasicMaterial({
+                map: texture
               });
               mesh.userData.hasImage = true;
             },
@@ -1528,7 +1524,7 @@
         }
 
         // Main spotlight - brighter for clearer photos
-        const spot = new THREE.SpotLight(0xfff5e0, 0.95, 14, Math.PI / 5, 0.45);
+        const spot = new THREE.SpotLight(0xfff5e0, 1.4, 16, Math.PI / 5, 0.4);
         spot.position.set(x * 0.65, 5.8, z * 0.65);
         spot.target = mesh;
         scene.add(spot);
@@ -1536,7 +1532,7 @@
         spots.push(spot);
 
         // Fill light from front for clarity
-        const fill = new THREE.PointLight(0xffffff, 0.35, 8);
+        const fill = new THREE.PointLight(0xffffff, 0.6, 10);
         fill.position.set(x * 0.85, 2.8, z * 0.85);
         scene.add(fill);
         rimLights.push(fill);
