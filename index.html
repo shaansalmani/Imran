@@ -416,6 +416,38 @@
       background: rgba(212, 165, 74, 0.2);
     }
 
+    .room-arrows {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 9;
+      display: flex;
+      gap: 80px;
+      align-items: center;
+    }
+    .room-arrow-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: rgba(10, 8, 3, 0.85);
+      color: #f4dfb2;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.55);
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .room-arrow-btn:hover {
+      background: rgba(212, 165, 74, 0.25);
+      transform: scale(1.08);
+    }
+    .room-arrow-btn:active {
+      transform: scale(0.95);
+    }
+
     #roomPanel {
       position: absolute;
       right: 14px;
@@ -856,6 +888,10 @@
       <button class="room-btn" id="backBtn" type="button">Back to UI</button>
       <span class="room-label" id="roomTitleLabel">SHOWROOM</span>
       <input class="room-search" id="roomSearchInput" type="search" placeholder="Search in showroom...">
+    </div>
+    <div class="room-arrows">
+      <button id="rotateLeftBtn" class="room-arrow-btn" type="button"><</button>
+      <button id="rotateRightBtn" class="room-arrow-btn" type="button">></button>
     </div>
     <button id="roomPanelToggle" class="room-panel-toggle" type="button">&#8597;</button>
     <aside id="roomPanel">
@@ -1733,6 +1769,12 @@
 
     document.getElementById("exploreBtn").addEventListener("click", startExperience);
     document.getElementById("backBtn").addEventListener("click", backToLanding);
+    document.getElementById("rotateLeftBtn").addEventListener("click", () => {
+      targetYaw += Math.PI / 3;
+    });
+    document.getElementById("rotateRightBtn").addEventListener("click", () => {
+      targetYaw -= Math.PI / 3;
+    });
     document.getElementById("roomQtyMinus").addEventListener("click", () => {
       selectedQty = Math.max(1, selectedQty - 1);
       document.getElementById("roomQtyValue").textContent = String(selectedQty);
@@ -1750,6 +1792,12 @@
     });
     document.getElementById("roomPanelToggle").addEventListener("click", () => {
       document.getElementById("roomPanel").classList.toggle("open");
+    });
+    document.getElementById("rotateLeftBtn").addEventListener("click", () => {
+      targetYaw += Math.PI / 3;
+    });
+    document.getElementById("rotateRightBtn").addEventListener("click", () => {
+      targetYaw -= Math.PI / 3;
     });
     roomSearchInput.addEventListener("input", () => {
       roomSearchQuery = roomSearchInput.value.trim().toLowerCase();
