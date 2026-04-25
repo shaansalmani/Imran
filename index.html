@@ -417,22 +417,22 @@
     }
 
     .room-arrows {
-      position: absolute;
-      right: 14px;
-      top: 22%;
-      z-index: 9;
       display: flex;
-      gap: 50px;
+      gap: 20px;
       align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(212, 165, 74, 0.2);
     }
     .room-arrow-btn {
-      width: 50px;
-      height: 50px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: 2px solid var(--border);
       background: rgba(10, 8, 3, 0.85);
       color: #f4dfb2;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 700;
       cursor: pointer;
       display: grid;
@@ -765,17 +765,6 @@
         width: 100%;
         font-size: 0.8rem;
       }
-      .room-arrows {
-        top: auto;
-        bottom: 200px;
-        right: 10px;
-        gap: 30px;
-      }
-      .room-arrow-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.3rem;
-      }
       .room-panel-toggle {
         right: 10px;
         bottom: 10px;
@@ -900,12 +889,12 @@
       <span class="room-label" id="roomTitleLabel">SHOWROOM</span>
       <input class="room-search" id="roomSearchInput" type="search" placeholder="Search in showroom...">
     </div>
-    <div class="room-arrows">
-      <button id="rotateLeftBtn" class="room-arrow-btn" type="button"><</button>
-      <button id="rotateRightBtn" class="room-arrow-btn" type="button">></button>
-    </div>
     <button id="roomPanelToggle" class="room-panel-toggle" type="button">&#8597;</button>
     <aside id="roomPanel">
+      <div class="room-arrows">
+        <button id="rotateLeftBtn" class="room-arrow-btn" type="button"><</button>
+        <button id="rotateRightBtn" class="room-arrow-btn" type="button">></button>
+      </div>
       <h3 id="roomName">Product</h3>
       <p class="panel-price" id="roomPrice">Rs 0</p>
       <p id="roomDesc">Tap any frame to view details.</p>
