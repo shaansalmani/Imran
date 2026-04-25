@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - Ethnic Royale</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@400;500;600&display=swap");
+    :root {
+      --gold: #d4a54a;
+      --panel: rgba(12, 9, 4, 0.86);
+      --border: rgba(212, 165, 74, 0.32);
+      --text: #f0e7d0;
+      --muted: #cbbd9c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Montserrat", sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(212, 165, 74, 0.1), transparent 40%), #060402;
+      padding: 20px;
+    }
+    .card {
+      width: min(900px, 96vw);
+      margin: 0 auto;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    h1 { font-family: "Cinzel", serif; color: #f2dfb4; }
+    p { color: var(--muted); line-height: 1.65; }
+    .btn {
+      border: 1px solid var(--border);
+      background: rgba(10, 7, 3, 0.7);
+      color: #f0dfb4;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="top">
+      <h1>About Us</h1>
+      <a class="btn" href="ndex.html">Back to Home</a>
+    </div>
+    <p>Ethnic Royale ek premium fashion experience hai jahan hum traditional elegance ko modern presentation ke saath blend karte hain.</p>
+    <p>Humara focus craftsmanship, fit, aur royal styling par hai, taaki har celebration memorable lage.</p>
+    <p>Virtual showroom approach se customers product ko immersive way me explore kar sakte hain aur direct order place kar sakte hain.</p>
+  </main>
+
+  <script src="auth-utils.js"></script>
+  <script>
+    Auth.requireAuthOrRedirect("login.html");
+  </script>
+</body>
+</html>

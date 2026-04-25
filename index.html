@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethnic Royale Virtual Store</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@400;500;600&display=swap");
+
+    :root {
+      --gold: #d4a54a;
+      --panel: rgba(12, 9, 4, 0.82);
+      --border: rgba(212, 165, 74, 0.3);
+      --text: #f0e7d0;
+      --muted: #c2b79d;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: "Montserrat", sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(8, 6, 2, 0.45), rgba(8, 6, 2, 0.78)),
+        url("../3d6de536-f33c-4d12-b8f2-3d6389d3113d.png") center/cover no-repeat fixed;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(214, 165, 85, 0.09) 0%, rgba(0, 0, 0, 0.7) 70%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.58));
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      padding: 18px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      z-index: 2;
+    }
+
+    .topbar, .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand h1 {
+      font-family: "Cinzel", serif;
+      font-size: 1.35rem;
+      color: #f2dfb0;
+    }
+
+    .brand span {
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .nav {
+      list-style: none;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: #e7dac0;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+    }
+
+    .nav a.active,
+    .nav a:hover {
+      border-color: var(--border);
+      background: rgba(212, 165, 74, 0.1);
+      color: #f8e6be;
+    }
+
+    .top-actions { display: flex; gap: 8px; align-items: center; }
+
+    .small-btn, .cart-btn {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(10, 8, 4, 0.7);
+      color: #f1e4c6;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .cart-btn { position: relative; }
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background: #f1c874;
+      color: #2d1b04;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .welcome {
+      padding: 20px;
+      align-self: start;
+      margin-top: 30px;
+    }
+
+    .welcome h2 {
+      font-family: "Cinzel", serif;
+      font-size: 1.8rem;
+      margin: 6px 0 10px;
+      color: #f1ddae;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #d8ab56, #b07b2b);
+      color: #1c1205;
+      margin-bottom: 10px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #f3dfb2;
+    }
+
+    .center {
+      position: relative;
+      border-radius: var(--radius);
+      border: 1px solid rgba(211, 167, 82, 0.2);
+      overflow: hidden;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, rgba(217, 172, 83, 0.1), rgba(0, 0, 0, 0.2) 56%, rgba(0, 0, 0, 0.32));
+    }
+
+    .ring {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      margin-bottom: 56px;
+      border: 4px solid rgba(224, 182, 101, 0.85);
+      box-shadow: 0 0 34px rgba(212, 165, 74, 0.46), inset 0 0 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .model {
+      position: absolute;
+      left: 50%;
+      bottom: 70px;
+      transform: translateX(-50%);
+      width: min(31vw, 360px);
+      border-radius: 12px;
+      border: 1px solid rgba(212, 165, 74, 0.35);
+    }
+    .model.hidden { display: none; }
+
+    .model.play-swap {
+      animation: centerSwap 0.95s ease;
+    }
+
+    @keyframes centerSwap {
+      0% { opacity: 0; transform: translateX(-50%) scale(0.86); }
+      35% { opacity: 1; transform: translateX(-50%) scale(1); }
+      75% { opacity: 1; transform: translateX(-58%) scale(1); }
+      100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    }
+
+    .center-detail {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: min(300px, 42%);
+      border: 1px solid rgba(212, 165, 74, 0.35);
+      border-radius: 12px;
+      background: rgba(11, 8, 3, 0.82);
+      padding: 12px;
+      backdrop-filter: blur(6px);
+      transform: translateX(16px);
+      opacity: 1;
+    }
+    .center-detail.hidden { display: none; }
+
+    .center-detail h3 {
+      font-family: "Cinzel", serif;
+      color: #f2dfb4;
+      font-size: 1.08rem;
+      margin-bottom: 4px;
+    }
+
+    .center-detail .price {
+      margin-bottom: 8px;
+    }
+
+    .center-detail .desc {
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .center-detail.play-detail {
+      animation: detailSlideIn 0.7s ease;
+    }
+
+    .center-placeholder {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: #cab88f;
+      font-size: 0.95rem;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .center-placeholder.visible {
+      opacity: 1;
+    }
+
+    @keyframes detailSlideIn {
+      0% { opacity: 0; transform: translateX(24px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    .price { color: #f7d590; font-weight: 700; margin-top: 2px; }
+    .desc { color: #d0c2a3; line-height: 1.45; font-size: 0.9rem; }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      min-height: 132px;
+    }
+
+    .orders-empty {
+      border: 1px dashed rgba(212, 165, 74, 0.32);
+      border-radius: 10px;
+      padding: 14px;
+      color: #d2c3a4;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .cart-bottom-strip {
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(100px, 1fr));
+      gap: 8px;
+    }
+
+    .cart-bottom-item {
+      border: 1px solid rgba(212, 165, 74, 0.25);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(12, 9, 4, 0.78);
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .cart-bottom-item:hover {
+      border-color: rgba(245, 203, 124, 0.92);
+      transform: translateY(-2px);
+    }
+
+    .cart-bottom-item img {
+      width: 100%;
+      height: 78px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cart-bottom-item p {
+      text-align: center;
+      padding: 7px 6px 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #e9dcbe;
+    }
+
+    .cart-bottom-item small {
+      display: block;
+      text-align: center;
+      padding: 0 6px 8px;
+      color: #cab88f;
+      font-size: 0.73rem;
+    }
+
+
+    #showroom {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 8;
+      background: #000;
+    }
+    #showroomCanvas { position: absolute; inset: 0; }
+
+    .room-ui {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .room-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(8, 6, 3, 0.7);
+      color: #f4dfb2;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .room-label {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(8, 6, 3, 0.75);
+      color: #f4dfb2;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .room-search {
+      width: min(240px, 58vw);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(8, 6, 3, 0.75);
+      color: #f4dfb2;
+      outline: none;
+    }
+    .room-search::placeholder {
+      color: #c9b58c;
+    }
+
+    #roomPanel {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%) translateX(120%);
+      transition: transform 0.28s ease;
+      z-index: 9;
+      width: min(320px, 90vw);
+      background: rgba(10, 8, 3, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      backdrop-filter: blur(7px);
+    }
+    #roomPanel.open { transform: translateY(-50%) translateX(0); }
+    #roomPanel h3 { font-family: "Cinzel", serif; color: #f0dfb4; margin-bottom: 6px; }
+    #roomPanel p { color: #d6c5a0; margin-bottom: 6px; }
+    #roomPanel .panel-price { color: #f3d391; font-weight: 700; font-size: 1.02rem; margin-bottom: 10px; }
+
+    .qty-box { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .qty-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(18, 13, 6, 0.8);
+      color: #f3dfb2;
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+    .qty-value { min-width: 28px; text-align: center; font-weight: 700; }
+    .room-actions { display: grid; gap: 8px; }
+    .room-actions button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: saturate(0.5);
+    }
+
+    .cart-panel {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      height: calc(100vh - 24px);
+      width: min(360px, 92vw);
+      z-index: 20;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(9, 7, 3, 0.94);
+      transform: translateX(115%);
+      transition: transform 0.28s ease;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      backdrop-filter: blur(8px);
+    }
+    .cart-panel.open { transform: translateX(0); }
+    .cart-head {
+      padding: 12px;
+      border-bottom: 1px solid rgba(212, 165, 74, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cart-head h3 { font-family: "Cinzel", serif; color: #f0dfb4; font-size: 1.1rem; }
+    .close-cart {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: #f0dfb4;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+    }
+    .cart-items {
+      list-style: none;
+      padding: 10px;
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .cart-item {
+      border: 1px solid rgba(212, 165, 74, 0.22);
+      border-radius: 10px;
+      background: rgba(21, 15, 7, 0.75);
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .cart-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .cart-item-name { font-weight: 600; color: #f0dfb4; }
+    .cart-item-price { color: #d6c5a0; font-size: 0.86rem; }
+    .remove-item {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: #f0dfb4;
+      border-radius: 8px;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .cart-foot {
+      border-top: 1px solid rgba(212, 165, 74, 0.2);
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+    .cart-total { display: flex; justify-content: space-between; font-weight: 700; color: #f0dfb4; }
+    .empty { padding: 16px; text-align: center; color: #c8b995; }
+
+    @media (max-width: 1150px) {
+      body { overflow: auto; }
+      .shell { min-height: 100vh; height: auto; }
+      .stage { grid-template-columns: 1fr; }
+      .welcome { margin-top: 0; }
+      .center { min-height: 440px; }
+      .nav { width: 100%; }
+      .top-actions { width: 100%; justify-content: flex-end; }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        padding: 12px;
+        gap: 10px;
+      }
+      .topbar {
+        padding: 10px;
+        gap: 10px;
+      }
+      .brand {
+        width: 100%;
+      }
+      .brand h1 {
+        font-size: 1.15rem;
+      }
+      .brand span {
+        font-size: 0.62rem;
+      }
+      .nav {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding-bottom: 2px;
+      }
+      .nav::-webkit-scrollbar {
+        height: 0;
+      }
+      .nav a {
+        font-size: 0.78rem;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+      .top-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .small-btn, .cart-btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 0.84rem;
+      }
+      .welcome {
+        padding: 14px;
+      }
+      .welcome h2 {
+        font-size: 1.45rem;
+      }
+      .welcome p {
+        font-size: 0.86rem;
+      }
+      .btn-primary, .btn-secondary {
+        padding: 10px 12px;
+        font-size: 0.84rem;
+      }
+      .center {
+        min-height: 360px;
+      }
+      .cart-bottom-strip { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+      .ring { width: 210px; height: 210px; margin-bottom: 44px; }
+      .model { width: min(74vw, 280px); bottom: 58px; }
+      .center-detail { width: calc(100% - 28px); max-width: none; }
+      .center-detail h3 {
+        font-size: 0.98rem;
+      }
+      .center-detail .desc {
+        font-size: 0.8rem;
+      }
+      .cart-panel {
+        width: calc(100vw - 14px);
+        height: calc(100vh - 14px);
+        top: 7px;
+        right: 7px;
+      }
+      .cart-head h3 {
+        font-size: 1rem;
+      }
+      .cart-items {
+        padding: 8px;
+      }
+      .cart-item {
+        padding: 8px;
+      }
+      .cart-item-name {
+        font-size: 0.85rem;
+      }
+      #roomPanel {
+        top: auto;
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        transform: translateY(130%);
+        padding: 12px;
+      }
+      #roomPanel.open { transform: translateY(0); }
+      .room-ui {
+        left: 10px;
+        top: 10px;
+        gap: 6px;
+      }
+      .room-btn, .room-label {
+        padding: 8px 10px;
+        font-size: 0.78rem;
+      }
+      .room-search {
+        width: 100%;
+        font-size: 0.8rem;
+      }
+      #roomPanel h3 {
+        font-size: 1rem;
+      }
+      #roomPanel p {
+        font-size: 0.84rem;
+      }
+      .qty-btn {
+        width: 32px;
+        height: 32px;
+      }
+      .qty-value {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .shell {
+        padding: 10px;
+      }
+      .center {
+        min-height: 320px;
+      }
+      .ring {
+        width: 180px;
+        height: 180px;
+        margin-bottom: 38px;
+      }
+      .model {
+        width: min(78vw, 250px);
+        bottom: 50px;
+      }
+      .cart-bottom-strip {
+        grid-template-columns: 1fr;
+      }
+      .center-detail {
+        inset: auto 10px 10px 10px;
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <main class="shell" id="landing">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Ethnic Royale</h1>
+        <span id="welcomeUser">Virtual Store</span>
+      </div>
+      <ul class="nav">
+        <li><a href="#" class="active">HOME</a></li>
+        <li><a href="collection.html">COLLECTION</a></li>
+        <li><a href="about.html">ABOUT US</a></li>
+        <li><a href="contact.html">CONTACT</a></li>
+      </ul>
+      <div class="top-actions">
+        <button class="small-btn" id="logoutBtn" type="button">LOGOUT</button>
+        <button class="cart-btn" id="openCartBtn" type="button">
+          CART
+          <span class="cart-badge" id="cartCount">0</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <aside class="welcome card">
+        <p>Welcome to</p>
+        <h2>Ethnic Royale</h2>
+        <p>Explore our premium ethnic collection in 3D with a luxury showroom experience.</p>
+        <button class="btn-primary" id="exploreBtn" type="button">EXPLORE COLLECTION</button>
+        <button class="btn-secondary" id="viewCartBtn" type="button">VIEW CART</button>
+      </aside>
+
+      <article class="center">
+        <div class="ring"></div>
+        <img class="model hidden" id="centerPreviewImage" alt="Ordered product preview">
+        <div class="center-detail hidden" id="centerDetailCard">
+          <h3 id="centerDetailName"></h3>
+          <p class="price" id="centerDetailPrice"></p>
+          <p class="desc" id="centerDetailDesc"></p>
+        </div>
+        <div class="center-placeholder visible" id="centerEmptyState">No order selected yet. Place an order and click it from the list below.</div>
+      </article>
+
+    </section>
+
+    <section class="bottom">
+      <div class="cart-bottom-strip card" id="cartBottomList"></div>
+    </section>
+  </main>
+
+  <section id="showroom">
+    <div id="showroomCanvas"></div>
+    <div class="room-ui">
+      <button class="room-btn" id="backBtn" type="button">Back to UI</button>
+      <span class="room-label" id="roomTitleLabel">SHOWROOM</span>
+      <input class="room-search" id="roomSearchInput" type="search" placeholder="Search in showroom...">
+    </div>
+    <aside id="roomPanel">
+      <h3 id="roomName">Product</h3>
+      <p class="panel-price" id="roomPrice">Rs 0</p>
+      <p id="roomDesc">Tap any frame to view details.</p>
+      <div class="qty-box">
+        <button class="qty-btn" id="roomQtyMinus" type="button">-</button>
+        <span class="qty-value" id="roomQtyValue">1</span>
+        <button class="qty-btn" id="roomQtyPlus" type="button">+</button>
+      </div>
+      <div class="room-actions">
+        <button class="btn-primary" id="roomAddCartBtn" type="button">ADD TO CART</button>
+        <button class="btn-secondary" id="roomOrderBtn" type="button">ORDER ON WHATSAPP</button>
+      </div>
+    </aside>
+  </section>
+
+  <aside class="cart-panel" id="cartPanel">
+    <div class="cart-head">
+      <h3>Your Cart</h3>
+      <button class="close-cart" id="closeCartBtn" type="button">X</button>
+    </div>
+    <ul class="cart-items" id="cartItems"></ul>
+    <div class="cart-foot">
+      <div class="cart-total"><span>Total</span><span id="cartTotal">Rs 0</span></div>
+      <button class="btn-primary" id="orderCartBtn" type="button">ORDER CART</button>
+      <button class="btn-secondary" id="clearCartBtn" type="button">CLEAR CART</button>
+    </div>
+  </aside>
+
+  <script src="auth-utils.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const user = Auth.requireAuthOrRedirect("login.html");
+    if (!user) {
+      throw new Error("Auth required");
+    }
+
+    document.getElementById("welcomeUser").textContent = "Logged in as " + user.name;
+
+    const WHATSAPP_NUMBER = "9149074092";
+    const CART_KEY = "ethnic_royale_cart_v2_" + user.id;
+    const ORDER_LIST_SESSION_KEY = "ethnic_royale_order_list_session_v2_" + user.id;
+
+    let scene, camera, renderer;
+    let products = [];
+    let spots = [];
+    let frames = [];
+    let pedestals = [];
+    let rimLights = [];
+    let started = false;
+    let currentYaw = 0;
+    let targetYaw = 0;
+    let raycaster, mouse;
+    let hoverProduct = null;
+    let touchActive = false;
+    let lastTouchX = 0;
+    let selectedProduct = null;
+    let selectedQty = 1;
+    let selectedRoom = "showroom";
+    let roomSearchQuery = "";
+    let bottomListData = [];
+    let labels = [];
+    const roomRadius = 6;
+
+    const roomLabelMap = { showroom: "SHOWROOM" };
+    const centerPreviewImage = document.getElementById("centerPreviewImage");
+    const centerDetailCard = document.getElementById("centerDetailCard");
+    const centerEmptyState = document.getElementById("centerEmptyState");
+    const roomAddCartBtn = document.getElementById("roomAddCartBtn");
+    const roomOrderBtn = document.getElementById("roomOrderBtn");
+    const roomSearchInput = document.getElementById("roomSearchInput");
+
+    let userOrders = loadSessionOrders();
+
+    const roomCatalog = {
+      showroom: Array.from({ length: 10 }, (_, i) => {
+        const idx = i + 1;
+        return {
+          id: "showroom-" + idx,
+          name: "SHOWROOM Product " + idx,
+          price: 1800 + i * 350,
+          desc: "Premium showroom design crafted for festive occasions.",
+          image: "product" + ((i % 3) + 1) + ".jpg"
+        };
+      })
+    };
+
+    let cart = loadCart();
+
+    function formatPrice(value) {
+      return "Rs " + Number(value).toLocaleString("en-IN");
+    }
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+
+    function loadSessionOrders() {
+      try {
+        const raw = sessionStorage.getItem(ORDER_LIST_SESSION_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveSessionOrders() {
+      sessionStorage.setItem(ORDER_LIST_SESSION_KEY, JSON.stringify(userOrders));
+    }
+
+    function updateCartCount() {
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").textContent = String(count);
+    }
+
+    function calculateTotal() {
+      return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById("cartItems");
+      cartItems.innerHTML = "";
+
+      if (!cart.length) {
+        cartItems.innerHTML = "<li class='empty'>Cart is empty</li>";
+      } else {
+        cart.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "cart-item";
+          li.innerHTML =
+            "<div class='cart-item-top'>" +
+              "<div><div class='cart-item-name'>" + item.name + "</div><div class='cart-item-price'>" + formatPrice(item.price) + "</div></div>" +
+              "<button class='remove-item' data-action='remove' data-index='" + index + "' type='button'>Remove</button>" +
+            "</div>" +
+            "<div class='qty-box'>" +
+              "<button class='qty-btn' data-action='minus' data-index='" + index + "' type='button'>-</button>" +
+              "<span class='qty-value'>" + item.qty + "</span>" +
+              "<button class='qty-btn' data-action='plus' data-index='" + index + "' type='button'>+</button>" +
+            "</div>";
+          cartItems.appendChild(li);
+        });
+      }
+
+      document.getElementById("cartTotal").textContent = formatPrice(calculateTotal());
+      updateCartCount();
+      saveCart();
+      renderBottomOrderList();
+    }
+
+    function addToCart(product, qty) {
+      if (!product || !qty || qty < 1) return;
+      const existing = cart.find((item) => item.id === product.id);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          qty: qty,
+          image: product.image || "",
+          details: product.desc || "Premium ethnic wear."
+        });
+      }
+      renderCart();
+    }
+
+    function setCenterEmptyState() {
+      centerPreviewImage.removeAttribute("src");
+      centerPreviewImage.classList.add("hidden");
+      centerDetailCard.classList.add("hidden");
+      centerEmptyState.classList.add("visible");
+      document.getElementById("centerDetailName").textContent = "";
+      document.getElementById("centerDetailPrice").textContent = "";
+      document.getElementById("centerDetailDesc").textContent = "";
+    }
+
+    function addOrderForCurrentUser(product, qty) {
+      if (!product || qty < 1) return;
+      const order = {
+        name: product.name,
+        price: formatPrice(product.price * qty),
+        image: product.image || "",
+        details: String(product.desc || "Premium ethnic wear.") + " | Qty: " + qty,
+        createdAt: Date.now()
+      };
+      userOrders.push(order);
+      saveSessionOrders();
+      renderBottomOrderList();
+    }
+
+    function addCartOrdersForCurrentUser() {
+      if (!cart.length) return;
+      cart.forEach((item) => {
+        userOrders.push({
+          name: item.name,
+          price: formatPrice(item.price * item.qty),
+          image: item.image || "",
+          details: (item.details || "Premium ethnic wear.") + " | Qty: " + item.qty,
+          createdAt: Date.now()
+        });
+      });
+      saveSessionOrders();
+      renderBottomOrderList();
+    }
+
+    function showOrderInCenter(order) {
+      if (!order) return;
+      centerEmptyState.classList.remove("visible");
+      updateProductCard(order);
+
+      const imagePath = String(order.image || "").trim();
+      if (imagePath) {
+        centerPreviewImage.src = imagePath;
+        centerPreviewImage.classList.remove("hidden");
+        centerPreviewImage.onerror = () => {
+          centerPreviewImage.removeAttribute("src");
+          centerPreviewImage.classList.add("hidden");
+        };
+        animateCenterImage();
+      } else {
+        centerPreviewImage.removeAttribute("src");
+        centerPreviewImage.classList.add("hidden");
+      }
+    }
+
+    function updateProductCard(payload) {
+      if (!payload) return;
+      document.getElementById("centerDetailName").textContent = payload.name || "";
+      document.getElementById("centerDetailPrice").textContent = payload.price || "";
+      document.getElementById("centerDetailDesc").textContent = payload.details || "";
+
+      centerDetailCard.classList.remove("hidden");
+      centerDetailCard.classList.remove("play-detail");
+      void centerDetailCard.offsetWidth;
+      centerDetailCard.classList.add("play-detail");
+    }
+
+    function cartItemToPreview(item) {
+      return {
+        image: item.image || "",
+        name: item.name || "Product",
+        price: formatPrice((Number(item.price) || 0) * (Number(item.qty) || 1)),
+        details: String(item.details || "Premium ethnic wear.") + " | Qty: " + (Number(item.qty) || 1)
+      };
+    }
+
+    function renderBottomOrderList() {
+      const cartBottomList = document.getElementById("cartBottomList");
+      if (cart.length) {
+        bottomListData = cart.map(cartItemToPreview);
+      } else if (userOrders.length) {
+        bottomListData = userOrders.map((item) => ({
+          image: item.image || "",
+          name: item.name || "Ordered item",
+          price: typeof item.price === "number" ? formatPrice(item.price) : String(item.price || ""),
+          details: String(item.details || "")
+        }));
+      } else {
+        bottomListData = [];
+      }
+
+      if (!bottomListData.length) {
+        cartBottomList.innerHTML = "<div class='orders-empty'>No items yet. Add to cart or order to see list here.</div>";
+        setCenterEmptyState();
+        return;
+      }
+
+      cartBottomList.innerHTML = "";
+      bottomListData.forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "cart-bottom-item";
+        card.dataset.index = String(index);
+        const imagePath = String(item.image || "").trim();
+        const displayPrice = String(item.price || "");
+        const imageHtml = imagePath
+          ? "<img src='" + imagePath + "' alt='Ordered item'>"
+          : "<div style='height:78px;display:grid;place-items:center;color:#bca77b;font-size:0.75rem;'>EMPTY</div>";
+        card.innerHTML =
+          imageHtml +
+          "<p>" + item.name + "</p>" +
+          "<small>" + displayPrice + "</small>";
+        cartBottomList.appendChild(card);
+      });
+    }
+
+    function animateCenterImage() {
+      if (centerPreviewImage.classList.contains("hidden")) return;
+      centerPreviewImage.classList.remove("play-swap");
+      void centerPreviewImage.offsetWidth;
+      centerPreviewImage.classList.add("play-swap");
+    }
+
+    function updateCartQty(index, change) {
+      if (!cart[index]) return;
+      cart[index].qty += change;
+      if (cart[index].qty <= 0) cart.splice(index, 1);
+      renderCart();
+    }
+
+    function buildWhatsAppText(items) {
+      const lines = items.map((item) => item.name + " - " + item.qty + " - " + formatPrice(item.qty * item.price));
+      lines.push("Total - " + formatPrice(items.reduce((sum, it) => sum + it.qty * it.price, 0)));
+      return encodeURIComponent("Ethnic Royale Order\n" + lines.join("\n"));
+    }
+
+    function openWhatsAppOrder(encodedText) {
+      const number = String(WHATSAPP_NUMBER || "").trim();
+      if (!number || number.includes("X")) {
+        alert("Please set your real WhatsApp number in WHATSAPP_NUMBER.");
+        return;
+      }
+      window.open("https://wa.me/" + number + "?text=" + encodedText, "_blank");
+    }
+
+    function orderCart() {
+      if (!cart.length) return;
+      addCartOrdersForCurrentUser();
+      backToLanding();
+      document.getElementById("cartPanel").classList.remove("open");
+      openWhatsAppOrder(buildWhatsAppText(cart));
+    }
+
+    function orderSingleProduct() {
+      if (!selectedProduct) return;
+      const single = [{ name: selectedProduct.name, price: selectedProduct.price, qty: selectedQty }];
+      openWhatsAppOrder(buildWhatsAppText(single));
+    }
+
+    function startExperience() {
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("showroom").style.display = "block";
+      if (started) return;
+      started = true;
+      init();
+      animate();
+    }
+
+    function backToLanding() {
+      document.getElementById("showroom").style.display = "none";
+      document.getElementById("landing").style.display = "grid";
+    }
+
+    function init() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x060402);
+      scene.fog = new THREE.FogExp2(0x0a0703, 0.045);
+
+      camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+      camera.position.set(0, 1.5, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      renderer.toneMapping = THREE.NoToneMapping;
+      document.getElementById("showroomCanvas").appendChild(renderer.domElement);
+
+      const ambient = new THREE.AmbientLight(0xffffff, 0.45);
+      scene.add(ambient);
+
+      // Neutral chandelier lights
+      const chandelierColors = [0xffffff, 0xfff8f0, 0xffffff];
+      for (let i = 0; i < 6; i++) {
+        const angle = (i / 6) * Math.PI * 2;
+        const cl = new THREE.PointLight(chandelierColors[i % 3], 0.4, 18);
+        cl.position.set(Math.cos(angle) * 2.5, 6, Math.sin(angle) * 2.5);
+        scene.add(cl);
+      }
+      const centerLight = new THREE.PointLight(0xffffff, 0.8, 30);
+      centerLight.position.set(0, 5.5, 0);
+      scene.add(centerLight);
+
+      const floor = new THREE.Mesh(
+        new THREE.CircleGeometry(10, 80),
+        new THREE.MeshStandardMaterial({ color: 0x0f0c08, roughness: 0.25, metalness: 0.65, envMapIntensity: 1.0 })
+      );
+      floor.rotation.x = -Math.PI / 2;
+      scene.add(floor);
+
+      // Concentric gold rings on floor
+      const ringConfigs = [
+        { inner: 0.6, outer: 0.9, color: 0xd4a54a, opacity: 0.65 },
+        { inner: 2.8, outer: 3.0, color: 0xb8860b, opacity: 0.45 },
+        { inner: 5.5, outer: 5.7, color: 0xd4a54a, opacity: 0.35 },
+        { inner: 8.2, outer: 8.35, color: 0x8b6914, opacity: 0.3 }
+      ];
+      ringConfigs.forEach(r => {
+        const rg = new THREE.Mesh(
+          new THREE.RingGeometry(r.inner, r.outer, 64),
+          new THREE.MeshBasicMaterial({ color: r.color, side: THREE.DoubleSide, transparent: true, opacity: r.opacity })
+        );
+        rg.rotation.x = -Math.PI / 2;
+        rg.position.y = 0.015;
+        scene.add(rg);
+      });
+
+      // Center star emblem
+      const centerStar = new THREE.Mesh(
+        new THREE.RingGeometry(0.2, 0.35, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffd700, side: THREE.DoubleSide, transparent: true, opacity: 0.8 })
+      );
+      centerStar.rotation.x = -Math.PI / 2;
+      centerStar.position.y = 0.025;
+      scene.add(centerStar);
+
+      // Classical pillars around showroom
+      const pillarCount = 8;
+      const pillarRadius = 8.5;
+      for (let i = 0; i < pillarCount; i++) {
+        const angle = (i / pillarCount) * Math.PI * 2;
+        const px = Math.cos(angle) * pillarRadius;
+        const pz = Math.sin(angle) * pillarRadius;
+
+        // Pillar body
+        const pillar = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.35, 0.4, 6, 16),
+          new THREE.MeshStandardMaterial({ color: 0x1a1510, roughness: 0.4, metalness: 0.3 })
+        );
+        pillar.position.set(px, 3, pz);
+        scene.add(pillar);
+
+        // Gold capital (top ring)
+        const capital = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.55, 0.35, 0.25, 16),
+          new THREE.MeshStandardMaterial({ color: 0xd4a54a, roughness: 0.3, metalness: 0.8 })
+        );
+        capital.position.set(px, 6.1, pz);
+        scene.add(capital);
+
+        // Gold base
+        const base = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.45, 0.55, 0.2, 16),
+          new THREE.MeshStandardMaterial({ color: 0xd4a54a, roughness: 0.3, metalness: 0.8 })
+        );
+        base.position.set(px, 0.1, pz);
+        scene.add(base);
+      }
+
+      // Ceiling dome
+      const dome = new THREE.Mesh(
+        new THREE.SphereGeometry(9, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+        new THREE.MeshStandardMaterial({ color: 0x080603, roughness: 0.9, metalness: 0.1, side: THREE.BackSide })
+      );
+      dome.position.y = 6.2;
+      scene.add(dome);
+
+      // Floating golden particles
+      const particleCount = 300;
+      const particleGeo = new THREE.BufferGeometry();
+      const particlePositions = new Float32Array(particleCount * 3);
+      for (let i = 0; i < particleCount; i++) {
+        particlePositions[i * 3] = (Math.random() - 0.5) * 16;
+        particlePositions[i * 3 + 1] = Math.random() * 7;
+        particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 16;
+      }
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+      const particleMat = new THREE.PointsMaterial({ color: 0xffd700, size: 0.04, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending });
+      const particles = new THREE.Points(particleGeo, particleMat);
+      particles.name = 'particles';
+      scene.add(particles);
+
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2(999, 999);
+
+      loadRoom(selectedRoom);
+
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("touchstart", onTouchStart, { passive: true });
+      document.addEventListener("touchmove", onTouchMove, { passive: true });
+      document.addEventListener("touchend", () => { touchActive = false; }, { passive: true });
+      window.addEventListener("click", onClickProduct);
+      window.addEventListener("resize", onResize);
+    }
+
+    function clearRoomMeshes() {
+      products.forEach((mesh) => {
+        scene.remove(mesh);
+        if (mesh.material.map) mesh.material.map.dispose();
+        mesh.geometry.dispose();
+        mesh.material.dispose();
+      });
+      frames.forEach((f) => {
+        scene.remove(f);
+        f.geometry.dispose();
+        f.material.dispose();
+      });
+      pedestals.forEach((p) => {
+        scene.remove(p);
+        p.geometry.dispose();
+        p.material.dispose();
+      });
+      spots.forEach((s) => {
+        scene.remove(s);
+        scene.remove(s.target);
+      });
+      rimLights.forEach((rl) => {
+        scene.remove(rl);
+      });
+      labels.forEach((l) => {
+        scene.remove(l);
+        if (l.material.map) l.material.map.dispose();
+        l.material.dispose();
+      });
+      products = [];
+      frames = [];
+      pedestals = [];
+      spots = [];
+      rimLights = [];
+      labels = [];
+    }
+
+    function getFilteredRoomProducts(roomKey) {
+      const allProducts = Array.isArray(roomCatalog[roomKey]) ? roomCatalog[roomKey] : [];
+      if (!roomSearchQuery) return allProducts;
+      return allProducts.filter((product) => {
+        const searchText = (String(product.name || "") + " " + String(product.desc || "")).toLowerCase();
+        return searchText.includes(roomSearchQuery);
+      });
+    }
+
+    function setRoomActionsEnabled(enabled) {
+      roomAddCartBtn.disabled = !enabled;
+      roomOrderBtn.disabled = !enabled;
+    }
+
+    function updateRoomPanelNoResults() {
+      document.getElementById("roomName").textContent = "No product found";
+      document.getElementById("roomPrice").textContent = "";
+      document.getElementById("roomDesc").textContent = "No matching product for this search.";
+      document.getElementById("roomQtyValue").textContent = "1";
+      document.getElementById("roomPanel").classList.add("open");
+    }
+
+    function createEmptyFrameMaterial() {
+      return new THREE.MeshBasicMaterial({
+        color: 0x2a2a2a,
+        transparent: true,
+        opacity: 0.2
+      });
+    }
+
+    function createTextSprite(text) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 512;
+      canvas.height = 128;
+      ctx.fillStyle = "rgba(0,0,0,0)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "bold 40px Montserrat, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#f0dfb4";
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
+      const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.95 });
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.set(1.8, 0.45, 1);
+      return sprite;
+    }
+
+    function loadRoom(roomKey) {
+      clearRoomMeshes();
+      selectedRoom = roomKey;
+      document.getElementById("roomTitleLabel").textContent = roomLabelMap[roomKey];
+
+      const list = getFilteredRoomProducts(roomKey);
+      if (!list.length) {
+        selectedProduct = null;
+        selectedQty = 1;
+        setRoomActionsEnabled(false);
+        updateRoomPanelNoResults();
+        return;
+      }
+
+      setRoomActionsEnabled(true);
+      const loader = new THREE.TextureLoader();
+
+      list.forEach((product, i) => {
+        const angle = (i / list.length) * Math.PI * 2;
+        const x = Math.cos(angle) * roomRadius;
+        const z = Math.sin(angle) * roomRadius;
+
+        // Pedestal stand
+        const pedestal = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.5, 0.6, 0.9, 16),
+          new THREE.MeshStandardMaterial({ color: 0x1f1a14, roughness: 0.35, metalness: 0.5 })
+        );
+        pedestal.position.set(x, 0.45, z);
+        scene.add(pedestal);
+        pedestals.push(pedestal);
+
+        // Gold top on pedestal
+        const pedTop = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.52, 0.5, 0.08, 16),
+          new THREE.MeshStandardMaterial({ color: 0xd4a54a, roughness: 0.3, metalness: 0.85 })
+        );
+        pedTop.position.set(x, 0.94, z);
+        scene.add(pedTop);
+        pedestals.push(pedTop);
+
+        // Gold frame behind product
+        const frame = new THREE.Mesh(
+          new THREE.PlaneGeometry(2.2, 3.2),
+          new THREE.MeshStandardMaterial({ color: 0xd4a54a, roughness: 0.25, metalness: 0.9 })
+        );
+        const awayX = x / roomRadius;
+        const awayZ = z / roomRadius;
+        frame.position.set(x + awayX * 0.08, 2.4, z + awayZ * 0.08);
+        frame.lookAt(0, 2.4, 0);
+        scene.add(frame);
+        frames.push(frame);
+
+        const mesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(2, 3),
+          createEmptyFrameMaterial()
+        );
+
+        mesh.position.set(x, 2.4, z);
+        mesh.lookAt(0, 2.4, 0);
+        mesh.userData = { product: product, originalY: 2.4 };
+
+        scene.add(mesh);
+        products.push(mesh);
+
+        // Label above product
+        const label = createTextSprite(product.name);
+        label.position.set(x, 4.1, z);
+        scene.add(label);
+        labels.push(label);
+
+        const imagePath = String(product.image || "").trim();
+        if (imagePath) {
+          loader.load(
+            imagePath,
+            (texture) => {
+              if (!mesh.parent) {
+                texture.dispose();
+                return;
+              }
+
+              texture.encoding = THREE.sRGBEncoding;
+              texture.minFilter = THREE.LinearMipmapLinearFilter;
+              texture.magFilter = THREE.LinearFilter;
+              texture.generateMipmaps = true;
+              texture.anisotropy = renderer ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 1;
+
+              if (mesh.material.map) {
+                mesh.material.map.dispose();
+              }
+              mesh.material.dispose();
+              mesh.material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.85, metalness: 0.0 });
+              mesh.userData.hasImage = true;
+            },
+            undefined,
+            () => {
+              mesh.userData.hasImage = false;
+            }
+          );
+        } else {
+          mesh.userData.hasImage = false;
+        }
+
+        const spot = new THREE.SpotLight(0xffffff, 0.45, 12, Math.PI / 6, 0.5);
+        spot.position.set(x * 0.7, 5.5, z * 0.7);
+        spot.target = mesh;
+        scene.add(spot);
+        scene.add(spot.target);
+        spots.push(spot);
+
+        // Rim/back light for subtle halo
+        const rim = new THREE.PointLight(0xffffff, 0.2, 6);
+        rim.position.set(x * 1.15, 2.4, z * 1.15);
+        scene.add(rim);
+        rimLights.push(rim);
+      });
+
+      const first = list[0];
+      selectedProduct = first;
+      selectedQty = 1;
+      updateRoomPanel(first);
+    }
+
+    function updateRoomPanel(product) {
+      if (!product) return;
+      document.getElementById("roomName").textContent = product.name;
+      document.getElementById("roomPrice").textContent = formatPrice(product.price);
+      document.getElementById("roomDesc").textContent = product.desc;
+      document.getElementById("roomQtyValue").textContent = String(selectedQty);
+      document.getElementById("roomPanel").classList.add("open");
+    }
+
+    function onMouseMove(e) {
+      const x = e.clientX / innerWidth - 0.5;
+      targetYaw = -x * Math.PI * 2;
+      mouse.x = (e.clientX / innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+    }
+
+    function onTouchStart(e) {
+      if (!e.touches[0]) return;
+      touchActive = true;
+      lastTouchX = e.touches[0].clientX;
+    }
+
+    function onTouchMove(e) {
+      if (!touchActive || !e.touches[0]) return;
+      const currentX = e.touches[0].clientX;
+      const delta = currentX - lastTouchX;
+      lastTouchX = currentX;
+      targetYaw += (delta / innerWidth) * Math.PI * 1.8;
+
+      mouse.x = (currentX / innerWidth) * 2 - 1;
+      mouse.y = 0;
+    }
+
+    function onClickProduct(e) {
+      if (!renderer || !products.length) return;
+
+      mouse.x = (e.clientX / innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const hit = raycaster.intersectObjects(products);
+
+      if (hit.length) {
+        selectedProduct = hit[0].object.userData.product;
+        selectedQty = 1;
+        updateRoomPanel(selectedProduct);
+      }
+    }
+
+    function onResize() {
+      if (!camera || !renderer) return;
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+    }
+
+    function updateHover() {
+      raycaster.setFromCamera(mouse, camera);
+      const hit = raycaster.intersectObjects(products);
+      const next = hit.length ? hit[0].object : null;
+
+      if (hoverProduct && hoverProduct !== next) {
+        hoverProduct.scale.set(1, 1, 1);
+      }
+      if (next) {
+        next.scale.lerp(new THREE.Vector3(1.06, 1.06, 1.06), 0.22);
+      }
+      hoverProduct = next;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!renderer) return;
+
+      currentYaw += (targetYaw - currentYaw) * 0.08;
+      camera.rotation.y = currentYaw;
+
+      const time = performance.now() * 0.001;
+
+      // Gentle bobbing for products
+      products.forEach((mesh, idx) => {
+        if (mesh.userData.originalY !== undefined) {
+          mesh.position.y = mesh.userData.originalY + Math.sin(time * 1.2 + idx * 0.8) * 0.04;
+        }
+      });
+
+      // Animate particles
+      const particleSystem = scene.getObjectByName('particles');
+      if (particleSystem) {
+        particleSystem.rotation.y = time * 0.02;
+        const positions = particleSystem.geometry.attributes.position.array;
+        for (let i = 0; i < positions.length / 3; i++) {
+          positions[i * 3 + 1] += Math.sin(time + i) * 0.002;
+        }
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+      }
+
+      updateHover();
+      renderer.render(scene, camera);
+    }
+
+    document.getElementById("exploreBtn").addEventListener("click", startExperience);
+    document.getElementById("backBtn").addEventListener("click", backToLanding);
+    document.getElementById("roomQtyMinus").addEventListener("click", () => {
+      selectedQty = Math.max(1, selectedQty - 1);
+      document.getElementById("roomQtyValue").textContent = String(selectedQty);
+    });
+    document.getElementById("roomQtyPlus").addEventListener("click", () => {
+      selectedQty += 1;
+      document.getElementById("roomQtyValue").textContent = String(selectedQty);
+    });
+
+    roomAddCartBtn.addEventListener("click", () => addToCart(selectedProduct, selectedQty));
+    roomOrderBtn.addEventListener("click", () => {
+      addOrderForCurrentUser(selectedProduct, selectedQty);
+      backToLanding();
+      orderSingleProduct();
+    });
+    roomSearchInput.addEventListener("input", () => {
+      roomSearchQuery = roomSearchInput.value.trim().toLowerCase();
+      loadRoom(selectedRoom);
+    });
+    document.getElementById("openCartBtn").addEventListener("click", () => document.getElementById("cartPanel").classList.add("open"));
+    document.getElementById("viewCartBtn").addEventListener("click", () => document.getElementById("cartPanel").classList.add("open"));
+    document.getElementById("closeCartBtn").addEventListener("click", () => document.getElementById("cartPanel").classList.remove("open"));
+    document.getElementById("orderCartBtn").addEventListener("click", orderCart);
+    document.getElementById("clearCartBtn").addEventListener("click", () => { cart = []; renderCart(); });
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      Auth.clearSession();
+      sessionStorage.removeItem(ORDER_LIST_SESSION_KEY);
+      window.location.replace("login.html");
+    });
+
+    document.getElementById("cartItems").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const index = Number(btn.dataset.index);
+      const action = btn.dataset.action;
+      if (action === "remove") {
+        cart.splice(index, 1);
+        renderCart();
+      } else if (action === "plus") {
+        updateCartQty(index, 1);
+      } else if (action === "minus") {
+        updateCartQty(index, -1);
+      }
+    });
+
+    document.getElementById("cartBottomList").addEventListener("click", (e) => {
+      const tile = e.target.closest(".cart-bottom-item");
+      if (!tile) return;
+      const item = bottomListData[Number(tile.dataset.index)];
+      if (!item) return;
+      showOrderInCenter(item);
+    });
+
+    renderCart();
+    renderBottomOrderList();
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Ethnic Royale</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Montserrat:wght@400;500;600&display=swap");
+    :root {
+      --gold: #d4a54a;
+      --bg: #060402;
+      --panel: rgba(15, 10, 4, 0.9);
+      --border: rgba(212, 165, 74, 0.34);
+      --text: #f1e6cc;
+      --muted: #c8b894;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: "Montserrat", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(212, 165, 74, 0.1), transparent 45%),
+        linear-gradient(180deg, #0b0703, #030201);
+      padding: 16px;
+    }
+    .card {
+      width: min(420px, 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel);
+      padding: 24px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+      animation: rise 0.45s ease;
+    }
+    h1 {
+      font-family: "Cinzel", serif;
+      color: #f5dfb0;
+      margin-bottom: 10px;
+    }
+    p { color: var(--muted); margin-bottom: 18px; }
+    label { display: block; margin-bottom: 8px; color: #e8d7b4; font-size: 0.9rem; }
+    input {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(6, 4, 1, 0.8);
+      color: var(--text);
+      margin-bottom: 14px;
+      outline: none;
+    }
+    input:focus { border-color: rgba(241, 196, 113, 0.9); }
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(90deg, #ddb469, #b88739);
+      color: #1f1303;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .msg { min-height: 20px; margin-top: 12px; color: #f1cb87; font-size: 0.9rem; }
+    .link {
+      margin-top: 14px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .link a { color: #f4d594; text-decoration: none; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Welcome Back</h1>
+    <p>Login to enter your personalized fashion dashboard.</p>
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button type="submit">Login</button>
+      <div class="msg" id="msg"></div>
+    </form>
+    <div class="link">New user? <a href="signup.html">Create account</a></div>
+  </main>
+
+  <script src="auth-utils.js"></script>
+  <script>
+    const existingUser = Auth.getCurrentUser();
+    if (existingUser) {
+      window.location.replace("ndex.html");
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const loginForm = document.getElementById("loginForm");
+    const msg = document.getElementById("msg");
+    const emailInput = document.getElementById("email");
+
+    const registered = params.get("registered") === "1";
+    const prefilledEmail = params.get("email");
+    if (prefilledEmail) {
+      emailInput.value = prefilledEmail;
+    }
+    if (registered) {
+      msg.textContent = "Signup successful. Please login with email and password.";
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      msg.textContent = "Logging in...";
+
+      const email = emailInput.value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const user = await Auth.loginWithEmailPassword({ email, password });
+        Auth.setSession(user.id);
+        window.location.replace("ndex.html");
+      } catch (error) {
+        msg.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
