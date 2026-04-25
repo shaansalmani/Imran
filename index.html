@@ -433,6 +433,92 @@
       filter: saturate(0.5);
     }
 
+    /* Center preview frame overlay */
+    .center-preview-frame {
+      position: fixed;
+      inset: 0;
+      z-index: 15;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(8px);
+      padding: 20px;
+      touch-action: none;
+    }
+    .center-preview-frame.active {
+      display: flex;
+    }
+    .preview-frame-box {
+      position: relative;
+      width: min(420px, 85vw);
+      background: rgba(12, 9, 4, 0.96);
+      border: 2px solid rgba(212, 165, 74, 0.85);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: 0 0 60px rgba(212, 165, 74, 0.35), inset 0 0 30px rgba(0, 0, 0, 0.6);
+      animation: framePop 0.35s ease;
+    }
+    @keyframes framePop {
+      0% { opacity: 0; transform: scale(0.82); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .preview-frame-box img {
+      width: 100%;
+      height: auto;
+      max-height: 52vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid rgba(212, 165, 74, 0.35);
+      display: block;
+      background: #0a0804;
+    }
+    .preview-frame-info {
+      margin-top: 12px;
+      text-align: center;
+    }
+    .preview-frame-info h4 {
+      font-family: "Cinzel", serif;
+      color: #f2dfb4;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+    .preview-frame-info .preview-price {
+      color: #f7d590;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    .preview-frame-info p {
+      color: #d0c2a3;
+      font-size: 0.82rem;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .preview-frame-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .preview-frame-actions button {
+      flex: 1;
+    }
+    .close-preview {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 165, 74, 0.8);
+      background: rgba(12, 9, 4, 0.95);
+      color: #f2dfb4;
+      font-size: 1.15rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
     .cart-panel {
       position: fixed;
       top: 12px;
@@ -720,6 +806,24 @@
 
   <section id="showroom">
     <div id="showroomCanvas"></div>
+
+    <!-- Centered preview frame overlay -->
+    <div class="center-preview-frame" id="centerPreviewFrame">
+      <div class="preview-frame-box">
+        <button class="close-preview" id="closePreviewBtn" type="button">&times;</button>
+        <img id="previewFrameImage" src="" alt="Selected product">
+        <div class="preview-frame-info">
+          <h4 id="previewFrameName">Product</h4>
+          <div class="preview-price" id="previewFramePrice">Rs 0</div>
+          <p id="previewFrameDesc">Description</p>
+          <div class="preview-frame-actions">
+            <button class="btn-primary" id="previewAddCartBtn" type="button">ADD TO CART</button>
+            <button class="btn-secondary" id="previewOrderBtn" type="button">ORDER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="room-ui">
       <button class="room-btn" id="backBtn" type="button">Back to UI</button>
       <span class="room-label" id="roomTitleLabel">SHOWROOM</span>
@@ -781,6 +885,10 @@
     let hoverProduct = null;
     let touchActive = false;
     let lastTouchX = 0;
+    let mouseDragActive = false;
+    let lastMouseX = 0;
+    let mouseDownStartX = 0;
+    let mouseDragDistance = 0;
     let selectedProduct = null;
     let selectedQty = 1;
     let selectedRoom = "showroom";
@@ -796,6 +904,16 @@
     const roomAddCartBtn = document.getElementById("roomAddCartBtn");
     const roomOrderBtn = document.getElementById("roomOrderBtn");
     const roomSearchInput = document.getElementById("roomSearchInput");
+
+    // Center preview frame elements
+    const centerPreviewFrame = document.getElementById("centerPreviewFrame");
+    const previewFrameImage = document.getElementById("previewFrameImage");
+    const previewFrameName = document.getElementById("previewFrameName");
+    const previewFramePrice = document.getElementById("previewFramePrice");
+    const previewFrameDesc = document.getElementById("previewFrameDesc");
+    const previewAddCartBtn = document.getElementById("previewAddCartBtn");
+    const previewOrderBtn = document.getElementById("previewOrderBtn");
+    const closePreviewBtn = document.getElementById("closePreviewBtn");
 
     let userOrders = loadSessionOrders();
 
@@ -1204,6 +1322,8 @@
       loadRoom(selectedRoom);
 
       document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mousedown", onMouseDown);
+      document.addEventListener("mouseup", onMouseUp);
       document.addEventListener("touchstart", onTouchStart, { passive: true });
       document.addEventListener("touchmove", onTouchMove, { passive: true });
       document.addEventListener("touchend", () => { touchActive = false; }, { passive: true });
@@ -1383,13 +1503,19 @@
               texture.minFilter = THREE.LinearMipmapLinearFilter;
               texture.magFilter = THREE.LinearFilter;
               texture.generateMipmaps = true;
-              texture.anisotropy = renderer ? Math.min(8, renderer.capabilities.getMaxAnisotropy()) : 1;
+              texture.anisotropy = renderer ? Math.min(16, renderer.capabilities.getMaxAnisotropy()) : 1;
 
               if (mesh.material.map) {
                 mesh.material.map.dispose();
               }
               mesh.material.dispose();
-              mesh.material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.85, metalness: 0.0 });
+              mesh.material = new THREE.MeshStandardMaterial({
+                map: texture,
+                roughness: 0.55,
+                metalness: 0.05,
+                emissive: 0x111111,
+                emissiveIntensity: 0.15
+              });
               mesh.userData.hasImage = true;
             },
             undefined,
@@ -1401,15 +1527,22 @@
           mesh.userData.hasImage = false;
         }
 
-        const spot = new THREE.SpotLight(0xffffff, 0.45, 12, Math.PI / 6, 0.5);
-        spot.position.set(x * 0.7, 5.5, z * 0.7);
+        // Main spotlight - brighter for clearer photos
+        const spot = new THREE.SpotLight(0xfff5e0, 0.95, 14, Math.PI / 5, 0.45);
+        spot.position.set(x * 0.65, 5.8, z * 0.65);
         spot.target = mesh;
         scene.add(spot);
         scene.add(spot.target);
         spots.push(spot);
 
+        // Fill light from front for clarity
+        const fill = new THREE.PointLight(0xffffff, 0.35, 8);
+        fill.position.set(x * 0.85, 2.8, z * 0.85);
+        scene.add(fill);
+        rimLights.push(fill);
+
         // Rim/back light for subtle halo
-        const rim = new THREE.PointLight(0xffffff, 0.2, 6);
+        const rim = new THREE.PointLight(0xffd700, 0.25, 7);
         rim.position.set(x * 1.15, 2.4, z * 1.15);
         scene.add(rim);
         rimLights.push(rim);
@@ -1431,10 +1564,26 @@
     }
 
     function onMouseMove(e) {
-      const x = e.clientX / innerWidth - 0.5;
-      targetYaw = -x * Math.PI * 2;
       mouse.x = (e.clientX / innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+
+      if (mouseDragActive) {
+        const delta = e.clientX - lastMouseX;
+        lastMouseX = e.clientX;
+        mouseDragDistance += Math.abs(delta);
+        targetYaw += (delta / innerWidth) * Math.PI * 2;
+      }
+    }
+
+    function onMouseDown(e) {
+      mouseDragActive = true;
+      lastMouseX = e.clientX;
+      mouseDownStartX = e.clientX;
+      mouseDragDistance = 0;
+    }
+
+    function onMouseUp() {
+      mouseDragActive = false;
     }
 
     function onTouchStart(e) {
@@ -1445,6 +1594,10 @@
 
     function onTouchMove(e) {
       if (!touchActive || !e.touches[0]) return;
+      // Prevent page scroll when interacting with showroom canvas
+      if (document.getElementById("showroom").style.display === "block") {
+        e.preventDefault();
+      }
       const currentX = e.touches[0].clientX;
       const delta = currentX - lastTouchX;
       lastTouchX = currentX;
@@ -1454,8 +1607,35 @@
       mouse.y = 0;
     }
 
+    function showCenterPreview(product) {
+      if (!product) return;
+      previewFrameName.textContent = product.name;
+      previewFramePrice.textContent = formatPrice(product.price);
+      previewFrameDesc.textContent = product.desc;
+
+      const imagePath = String(product.image || "").trim();
+      if (imagePath) {
+        previewFrameImage.src = imagePath;
+        previewFrameImage.classList.remove("hidden");
+        previewFrameImage.onerror = () => {
+          previewFrameImage.removeAttribute("src");
+          previewFrameImage.classList.add("hidden");
+        };
+      } else {
+        previewFrameImage.removeAttribute("src");
+        previewFrameImage.classList.add("hidden");
+      }
+      centerPreviewFrame.classList.add("active");
+    }
+
+    function hideCenterPreview() {
+      centerPreviewFrame.classList.remove("active");
+    }
+
     function onClickProduct(e) {
       if (!renderer || !products.length) return;
+      // Ignore clicks that were actually drags (rotation)
+      if (mouseDragDistance > 6) return;
 
       mouse.x = (e.clientX / innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / innerHeight) * 2 + 1;
@@ -1467,6 +1647,7 @@
         selectedProduct = hit[0].object.userData.product;
         selectedQty = 1;
         updateRoomPanel(selectedProduct);
+        showCenterPreview(selectedProduct);
       }
     }
 
@@ -1543,6 +1724,22 @@
     roomSearchInput.addEventListener("input", () => {
       roomSearchQuery = roomSearchInput.value.trim().toLowerCase();
       loadRoom(selectedRoom);
+    });
+
+    // Center preview frame event listeners
+    closePreviewBtn.addEventListener("click", hideCenterPreview);
+    centerPreviewFrame.addEventListener("click", (e) => {
+      if (e.target === centerPreviewFrame) hideCenterPreview();
+    });
+    previewAddCartBtn.addEventListener("click", () => {
+      addToCart(selectedProduct, selectedQty);
+      hideCenterPreview();
+    });
+    previewOrderBtn.addEventListener("click", () => {
+      addOrderForCurrentUser(selectedProduct, selectedQty);
+      hideCenterPreview();
+      backToLanding();
+      orderSingleProduct();
     });
     document.getElementById("openCartBtn").addEventListener("click", () => document.getElementById("cartPanel").classList.add("open"));
     document.getElementById("viewCartBtn").addEventListener("click", () => document.getElementById("cartPanel").classList.add("open"));
